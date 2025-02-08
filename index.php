@@ -1,46 +1,47 @@
 <?php 
-session_start();
+  session_start();
 
-include("db.php");
-$passwordErr=$nameErr=$specialErr="";
-$name=$password="";
-if(isset($_POST['signin'])){
+  include("db.php");
+  $passwordErr=$nameErr=$specialErr="";
+  $name=$password="";
 
-  // username field
+  if(isset($_POST['signin'])){
 
-  if(empty($_POST['username']))
-      $nameErr="Your Username Is Required !";
-  else{
-      $name=$_POST['username'];
-      if(!preg_match('/^[a-zA-Z\s]*$/',$name)){
-          $nameErr = "Only letters and white space allowed";
+    // username field
+
+    if(empty($_POST['username']))
+        $nameErr="Your Username Is Required !";
+    else{
+        $name=$_POST['username'];
+        if(!preg_match('/^[a-zA-Z\s]*$/',$name)){
+            $nameErr = "Only letters and white space allowed";
+        }
+    }
+
+  // password field
+
+    if(empty($_POST['password']))
+      $passwordErr ="Your Password Is Required !";
+    else
+      $password=$_POST["password"];
+    
+    if($nameErr==""&& $passwordErr==""){
+      $sql= "SELECT *FROM login3 WHERE username='$name'";
+      $result= mysqli_query($conn,$sql);
+      $row= mysqli_fetch_assoc($result);
+      if(mysqli_num_rows($result)>0){
+        if($row['password']!=$password)
+        $passwordErr="This Password Is Incorrect";
+      else{
+        $_SESSION['name']=$name;
+        header("Location:home.php");
       }
-  }
-
- // password field
-
-  if(empty($_POST['password']))
-    $passwordErr ="Your Password Is Required !";
-  else
-    $password=$_POST["password"];
-  
-  if($nameErr==""&& $passwordErr==""){
-    $sql= "SELECT *FROM login3 WHERE username='$name'";
-    $result= mysqli_query($conn,$sql);
-    $row= mysqli_fetch_assoc($result);
-    if(mysqli_num_rows($result)>0){
-      if($row['password']!=$password)
-      $passwordErr="This Password Is Incorrect";
-    else{
-      $_SESSION['name']=$name;
-      header("Location:home.php");
-    }
-    }
-    else{
-      $specialErr="This Account Is not exist (check username or password)";
+      }
+      else{
+        $specialErr="This Account Is not exist (check username or password)";
+      }
     }
   }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +76,7 @@ if(isset($_POST['signin'])){
         Forgot Password?
       </a>
     </div>
-    <div class="text-red-500 mt-4 text-center hover:text-blue-800"><a href="signup.php">Don't Have an account? Register now</a></div>
+    <div class="text-purple-600 mt-4 text-center hover:text-red-600"><a href="signup.php">Don't Have an account? Register now</a></div>
   </form>
 </div>
 </body>
